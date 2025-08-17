@@ -71,7 +71,7 @@ class EmailService:
 
     async def send_payment_reminder(self, details: PaymentReminderEmail):
         """
-        Envía un recordatorio de pago pendiente.
+        Envía un recordatorio de pago pendiente. 
         """
         subject = "Recordatorio de Pago Pendiente - Academia Aurora Mentis"
         html_content = f"""
