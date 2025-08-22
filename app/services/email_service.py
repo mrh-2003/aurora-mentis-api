@@ -26,7 +26,7 @@ class EmailService:
             return
 
         message = MIMEMultipart("alternative")
-        message["From"] = f"Aurora Mentis <{settings.SMTP_USER}>"
+        message["From"] = f"ADE Academy <{settings.SMTP_USER}>"
         message["To"] = ", ".join(recipients)
         message["Subject"] = subject
         message.attach(MIMEText(html_content, "html"))
@@ -48,7 +48,7 @@ class EmailService:
         """
         Envía una notificación de pago exitoso.
         """
-        subject = "Confirmación de Pago - Academia Aurora Mentis"
+        subject = "Confirmación de Pago - ADE Academy"
         html_content = f"""
         <html>
             <body>
@@ -59,7 +59,7 @@ class EmailService:
                     <li><strong>Fecha de Pago:</strong> {details.payment_date}</li>
                     <li><strong>Tu próxima fecha de pago es:</strong> {details.new_due_date}</li>
                 </ul>
-                <p>Gracias por ser parte de <strong>Aurora Mentis</strong>.</p>
+                <p>Gracias por ser parte de <strong>ADE Academy</strong>.</p>
             </body>
         </html>
         """
@@ -73,7 +73,7 @@ class EmailService:
         """
         Envía un recordatorio de pago pendiente. 
         """
-        subject = "Recordatorio de Pago Pendiente - Academia Aurora Mentis"
+        subject = "Recordatorio de Pago Pendiente - ADE Academy"
         html_content = f"""
         <html>
             <body>
@@ -84,7 +84,7 @@ class EmailService:
                     <li><strong>Fecha de Vencimiento:</strong> {details.due_date}</li>
                 </ul>
                 <p>Por favor, realiza tu pago a la brevedad para evitar la desactivación de tu cuenta.</p>
-                <p>Atentamente,<br>El equipo de <strong>Aurora Mentis</strong>.</p>
+                <p>Atentamente,<br>El equipo de <strong>ADE Academy</strong>.</p>
             </body>
         </html>
         """

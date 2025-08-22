@@ -32,6 +32,7 @@ class UserService:
         try:
             today = datetime.now().date()
             students_snapshot = self.users_ref.where('status', '==', 'active').stream()
+            print(students_snapshot)
             overdue_students = []
 
             for student in students_snapshot:

@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 import requests
 import logging
 
-from app.routers import emails, cron
+from app.routers import emails, cron, users 
 from app.core.config import settings
 
 # Configure logging
@@ -54,7 +54,7 @@ async def lifespan(app: FastAPI):
     )
     scheduler.add_job(
         run_reminder_job,
-        CronTrigger(day=30, hour=10, minute=0), # Cada día 30 del mes a las 10:00 AM
+        CronTrigger(day=21, hour=20, minute=35), # Cada día 30 del mes a las 10:00 AM
         id="send_reminders_job",
         name="Send Payment Reminders",
         replace_existing=True
@@ -78,7 +78,7 @@ app = FastAPI(
 # --- CORS Middleware ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:3000"], # Permite el origen del frontend
+    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173"], # Permite el origen del frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,6 +87,7 @@ app.add_middleware(
 # --- Include Routers ---
 app.include_router(emails.router)
 app.include_router(cron.router)
+app.include_router(users.router)
 
 @app.get("/", tags=["Root"])
 def read_root():
@@ -94,3 +95,4 @@ def read_root():
     Endpoint raíz para verificar que el backend está funcionando.
     """
     return {"message": "Welcome to Aurora Mentis API. The system is running."}
+ 
