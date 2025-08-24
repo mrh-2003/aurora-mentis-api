@@ -1,9 +1,10 @@
 # app/main.py
 
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from fastapi import FastAPI, Request
+from fastapi.responses import Response
 from contextlib import asynccontextmanager
 import requests
 import logging
@@ -88,6 +89,18 @@ app.add_middleware(
 app.include_router(emails.router)
 app.include_router(cron.router)
 app.include_router(users.router)
+
+@app.middleware("http")
+async def handle_head_requests(request: Request, call_next):
+    if request.method == "HEAD":
+        with_body = await call_next(request.body)
+        response = Response(
+            content=None,
+            status_code=with_body.status_code,
+            headers=with_body.headers
+        )
+        return response
+    return await call_next(request)
 
 @app.get("/", tags=["Root"])
 def read_root():
