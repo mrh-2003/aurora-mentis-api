@@ -54,7 +54,7 @@ async def lifespan(app: FastAPI):
     )
     scheduler.add_job(
         run_reminder_job,
-        CronTrigger(day=21, hour=20, minute=35), # Cada día 30 del mes a las 10:00 AM
+        CronTrigger(day=30, hour=10, minute=0), # Cada día 30 del mes a las 10:00 AM
         id="send_reminders_job",
         name="Send Payment Reminders",
         replace_existing=True

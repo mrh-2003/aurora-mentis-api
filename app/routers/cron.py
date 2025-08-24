@@ -52,15 +52,14 @@ async def trigger_payment_reminders(
 
 
 @router.post("/deactivate-overdue-users", status_code=status.HTTP_200_OK)
-def trigger_deactivation_of_overdue_users(
+async def trigger_deactivation_of_overdue_users(
+    background_tasks: BackgroundTasks, # Añadimos BackgroundTasks
     user_srv: UserService = Depends(lambda: user_service)
 ):
     """
-    Endpoint para la tarea programada que desactiva usuarios morosos.
-    Se ejecuta el día 3 de cada mes y desactiva a quienes debían pagar el mes anterior.
+    Endpoint para la tarea programada que desactiva usuarios morosos y les notifica.
     """
     logger.info("CRON JOB: Starting 'deactivate_overdue_users' task.")
-    # La lógica de `get_active_students_with_due_payments` ya filtra por fecha vencida
     overdue_students = user_srv.get_active_students_with_due_payments()
 
     if not overdue_students:
@@ -69,11 +68,9 @@ def trigger_deactivation_of_overdue_users(
 
     deactivated_count = 0
     for student in overdue_students:
-        success = user_srv.deactivate_firebase_user(student['id'], student['email'])
-        if success:
-            deactivated_count += 1
-            # Aquí podrías añadir una notificación en la colección 'notifications' de Firestore
-            logger.info(f"Successfully deactivated user: {student['email']}")
-
-    logger.info(f"CRON JOB: Deactivated {deactivated_count} users.")
-    return {"message": f"Se desactivaron {deactivated_count} usuarios morosos."}
+        # Usamos background_tasks para que la desactivación y envío de correo no bloqueen el proceso
+        background_tasks.add_task(user_srv.deactivate_firebase_user, student)
+        deactivated_count += 1
+        
+    logger.info(f"CRON JOB: Scheduled deactivation for {deactivated_count} users.")
+    return {"message": f"Se programó la desactivación y notificación para {deactivated_count} usuarios morosos."}
