@@ -29,7 +29,7 @@ class EmailService:
             return
 
         message = MIMEMultipart("alternative")
-        message["From"] = f"ADE Academy <{settings.SMTP_USER}>"
+        message["From"] = f"AD Academy <{settings.SMTP_USER}>"
         message["To"] = ", ".join(recipients)
         message["Subject"] = subject
         message.attach(MIMEText(html_content, "html"))
@@ -48,24 +48,24 @@ class EmailService:
             logger.error(f"Failed to send email to {', '.join(recipients)}: {e}")
 
     async def send_payment_notification(self, details: PaymentNotificationEmail):
-        subject = "Confirmación de Pago - ADE Academy"
+        subject = "Confirmación de Pago - AD Academy"
         debt_message = (f"<p><strong>Importante:</strong> Tienes un saldo pendiente de <strong>S/ {details.amount_due:.2f}</strong>. "
                         f"Tienes hasta el <strong>{details.payment_deadline}</strong> para completarlo.</p>") if details.amount_due > 0 else "<p>¡Excelente! No tienes deudas pendientes.</p>"
         html_content = f"""
         <html><body><h2>¡Gracias por tu pago, {details.student_name}!</h2><p>Hemos registrado correctamente tu pago en nuestro sistema.</p>
         <ul><li><strong>Monto Pagado:</strong> S/ {details.payment_amount:.2f}</li><li><strong>Fecha de Pago:</strong> {details.payment_date}</li></ul>
-        {debt_message}<p>Gracias por ser parte de <strong>ADE Academy</strong>.</p></body></html>"""
+        {debt_message}<p>Gracias por ser parte de <strong>AD Academy</strong>.</p></body></html>"""
         recipients = [details.student_email]
         if details.guardian_email: recipients.append(details.guardian_email)
         await self._send_email(recipients, subject, html_content)
 
     async def send_payment_reminder(self, details: PaymentReminderEmail):
-        subject = "Recordatorio de Pago Pendiente - ADE Academy"
+        subject = "Recordatorio de Pago Pendiente - AD Academy"
         html_content = f"""
         <html><body><h2>Recordatorio de Pago, {details.student_name}</h2><p>Te escribimos para recordarte que tienes un pago pendiente con la academia.</p>
         <ul><li><strong>Monto a Pagar:</strong> S/ {details.amount_due:.2f}</li><li><strong>Fecha de Vencimiento:</strong> {details.due_date}</li></ul>
         <p>Por favor, realiza tu pago a la brevedad para evitar la desactivación de tu cuenta.</p>
-        <p>Atentamente,<br>El equipo de <strong>ADE Academy</strong>.</p></body></html>"""
+        <p>Atentamente,<br>El equipo de <strong>AD Academy</strong>.</p></body></html>"""
         recipients = [details.student_email]
         if details.guardian_email: recipients.append(details.guardian_email)
         await self._send_email(recipients, subject, html_content)
@@ -74,19 +74,19 @@ class EmailService:
         """
         Envía una notificación de beca aplicada.
         """
-        subject = "¡Felicidades! Has recibido una Beca en ADE Academy"
+        subject = "¡Felicidades! Has recibido una Beca en AD Academy"
         html_content = f"""
         <html>
             <body>
                 <h2>¡Hola, {details.student_name}!</h2>
-                <p>Nos complace informarte que se te ha otorgado una beca en la ADE Academy.</p>
+                <p>Nos complace informarte que se te ha otorgado una beca en la AD Academy.</p>
                 <ul>
                     <li><strong>Porcentaje de Beca:</strong> {details.percentage}%</li>
                     <li><strong>Tu nueva mensualidad es de:</strong> S/ {details.new_monthly_fee:.2f}</li>
                     <li><strong>Tu próxima fecha de pago es:</strong> {details.next_payment_date}</li>
                 </ul>
                 <p>¡Sigue esforzándote!</p>
-                <p>Atentamente,<br>El equipo de <strong>ADE Academy</strong>.</p>
+                <p>Atentamente,<br>El equipo de <strong>AD Academy</strong>.</p>
             </body>
         </html>
         """
@@ -99,7 +99,7 @@ class EmailService:
         """
         Envía una notificación de cuenta inhabilitada por falta de pago.
         """
-        subject = "Notificación: Acceso a la plataforma deshabilitado - ADE Academy"
+        subject = "Notificación: Acceso a la plataforma deshabilitado - AD Academy"
         html_content = f"""
         <html>
             <body>
@@ -113,7 +113,7 @@ class EmailService:
                     <strong>957-018-079</strong> para confirmar la operación.
                 </p>
                 <p>Agradecemos tu comprensión.</p>
-                <p>Atentamente,<br>El equipo de <strong>ADE Academy</strong>.</p>
+                <p>Atentamente,<br>El equipo de <strong>AD Academy</strong>.</p>
             </body>
         </html>
         """
@@ -128,7 +128,7 @@ class EmailService:
         Notifica un cambio en el estado de la cuenta (activada/desactivada).
         """
         status_text = "ha sido activada" if details.status == "activada" else "ha sido desactivada"
-        subject = f"Tu cuenta de ADE Academy {status_text}"
+        subject = f"Tu cuenta de AD Academy {status_text}"
         
         message_body = ""
         if details.status == "activada":
@@ -138,7 +138,7 @@ class EmailService:
 
         html_content = f"""
         <html><body><h2>¡Hola, {details.student_name}!</h2>{message_body}
-        <p>Atentamente,<br>El equipo de <strong>ADE Academy</strong>.</p></body></html>
+        <p>Atentamente,<br>El equipo de <strong>AD Academy</strong>.</p></body></html>
         """
         recipients = [details.student_email]
         if details.guardian_email: recipients.append(details.guardian_email)
@@ -148,7 +148,7 @@ class EmailService:
         """
         Envía una notificación con la lista de plataformas asignadas.
         """
-        subject = "Bienvenido a ADE Academy - Tus Plataformas de Estudio"
+        subject = "Bienvenido a AD Academy - Tus Plataformas de Estudio"
         
         platforms_html = "<ul>"
         for platform in details.platforms:
@@ -160,7 +160,7 @@ class EmailService:
         <p>Gracias por matricularte con nosotros. Tienes acceso a las siguientes plataformas de estudio:</p>
         {platforms_html}
         <p>Usa tu correo como usuario y contraseña para acceder a las cuentas. No olvides cambiar tu contraseña en Flyfar.</p>
-        <p>Atentamente,<br>El equipo de <strong>ADE Academy</strong>.</p></body></html>
+        <p>Atentamente,<br>El equipo de <strong>AD Academy</strong>.</p></body></html>
         """
         recipients = [details.student_email]
         if details.guardian_email: recipients.append(details.guardian_email)
